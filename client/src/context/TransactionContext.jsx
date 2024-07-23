@@ -61,8 +61,8 @@ export const TransactionProvider = ({ children }) => {
 
 			const structuredTransactions = transactions.map((transaction) => {
 				return {
-					addressTo: transaction.addressTo,
-					addressFrom: transaction.addressFrom,
+					addressTo: transaction.receiver,
+					addressFrom: transaction.sender,
 					amount: parseInt(transaction.amount._hex) / 10 ** 18,
 					message: transaction.message,
 					keyword: transaction.keyword,
@@ -71,10 +71,9 @@ export const TransactionProvider = ({ children }) => {
 					).toLocaleString(),
 				};
 			});
-			console.log("all transactions:", structuredTransactions);
 			setTransactions(structuredTransactions);
 		} catch (error) {
-			console.log(error);
+			console.log("Error getting all transactions: ", error);
 		}
 	};
 
@@ -85,15 +84,12 @@ export const TransactionProvider = ({ children }) => {
 
 			if (accounts.length) {
 				setCurrentAccount(accounts[0]);
-
-				// getAllTransactions();
+				getAllTransactions();
 			} else {
-				console.log("No accounts connected!");
+				console.log("No accounts found!");
 			}
-
-			console.log("accounts:", accounts);
 		} catch (error) {
-			console.log(error);
+			console.log("Error checking if wallet is connected: ", error);
 		}
 	};
 
@@ -107,7 +103,7 @@ export const TransactionProvider = ({ children }) => {
 
 			setCurrentAccount(accounts[0]);
 		} catch (error) {
-			console.log(error);
+			console.log("Error connecting wallet: ", error);
 		}
 	};
 
@@ -122,14 +118,14 @@ export const TransactionProvider = ({ children }) => {
 			// now we can call the methods from our contract
 			const transactionContract = getEthereumContract();
 
-			// This line actually sends the transaction. The transfer is complete after this, but has not been added to OUR blockchain yet.
+			// This line actually sends the transaction. The transfer is technically complete after this, but has not been added to OUR blockchain yet.
 			await ethereum.request({
 				method: "eth_sendTransaction",
 				params: [
 					{
 						to: addressTo,
 						from: currentAccount,
-						gas: "0x5280", // 21000 GWEI
+						gas: "0x5280", // 21000 wei
 						value: parsedAmountHex,
 					},
 				],
@@ -137,16 +133,16 @@ export const TransactionProvider = ({ children }) => {
 
 			// so what is happening down here??
 			// I guess this code puts our smart contract out there in the blockchain
+			setIsLoading(true);
 			const transactionHash = await transactionContract.addToBlockChain(
 				addressTo,
 				parsedAmount,
 				message,
 				keyword
 			);
-			setIsLoading(true);
-			console.log("waiting for transactionHash:", transactionHash);
-
-			await transactionHash.wait(); // wait for transaction to finish
+			console.log("waiting for transaction to finish: ", transactionHash);
+			await transactionHash.wait();
+			
 			setIsLoading(false);
 			console.log("Transaction successful!: ", transactionHash);
 
@@ -162,7 +158,7 @@ export const TransactionProvider = ({ children }) => {
 
 	useEffect(() => {
 		checkIfWalletIsConnected();
-		getEthereumContract();
+		checkIfTransactionsExist();
 	}, []);
 
 	return (
@@ -175,6 +171,7 @@ export const TransactionProvider = ({ children }) => {
 				sendTransaction,
 				transactions,
 				isLoading,
+				transactionCount,
 			}}
 		>
 			{children}

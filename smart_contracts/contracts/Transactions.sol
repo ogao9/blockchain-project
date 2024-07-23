@@ -26,7 +26,7 @@ contract Transactions {
         // msg.sender comes into the function by default
         transactions.push(TransferStruct(msg.sender, receiver, amount, message, block.timestamp, keyword));
         
-        // so this line actually transfers the amount
+        // so this line actually stores the transaction in the blockchain
         emit Transfer(msg.sender, receiver, amount, message, block.timestamp, keyword);
     }
 

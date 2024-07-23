@@ -11,6 +11,7 @@ function App() {
 		handleChange,
 		sendTransaction,
 		transactions,
+		transactionCount,
 		isLoading,
 	} = useContext(TransactionContext);
 
@@ -28,7 +29,7 @@ function App() {
 
 	return (
 		<>
-			<h1>Vite + React</h1>
+			<h1>Vite x Blockchain</h1>
 			<div>
 				<a href="https://vitejs.dev" target="_blank">
 					<img src={viteLogo} className="logo" alt="Vite logo" />
@@ -70,18 +71,23 @@ function App() {
 						placeholder="Message"
 					/>
 				</div>
-				{!isLoading && (
+				{isLoading ? (
+					<button disabled>Loading...</button>
+				) : (
 					<button onClick={handleSubmit}>Send Transaction</button>
 				)}
 			</div>
 			<div>
-				<h1>Transactions</h1>
+				<h2>Transaction History</h2>
+				<p>Total transactions: {transactionCount}</p>
 				{transactions.reverse().map((transaction, index) => (
 					<div key={index} style={{ border: "1px solid black" }}>
-						<p>Address: {transaction.address}</p>
-						<p>Amount: {transaction.amount}</p>
+						<p>Sender: {transaction.addressFrom}</p>
+						<p>Receiver: {transaction.addressTo}</p>
+						<p>Amount: {transaction.amount} ETH</p>
 						<p>Keyword: {transaction.keyword}</p>
 						<p>Message: {transaction.message}</p>
+						<p>Timestamp: {transaction.timestamp}</p>
 					</div>
 				))}
 			</div>
