@@ -19,4 +19,4 @@ I followed [this awesome YouTube tutorial](https://www.youtube.com/watch?v=Wn_Kb
 
 Other Links: \
 [Smart contract hello world example](https://docs.alchemy.com/docs/hello-world-smart-contract) \
-[Smart contracts explained by AWS](https://aws.amazon.com/blockchain/what-is-ethereum/)
+[Smart contracts explained by AWS](https://aws.amazon.com/blockchain/what-is-ethereum/) 
