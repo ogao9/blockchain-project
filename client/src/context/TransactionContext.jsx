@@ -102,6 +102,7 @@ export const TransactionProvider = ({ children }) => {
 			});
 
 			setCurrentAccount(accounts[0]);
+			getAllTransactions();
 		} catch (error) {
 			console.log("Error connecting wallet: ", error);
 		}
